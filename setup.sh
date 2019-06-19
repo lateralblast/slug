@@ -186,6 +186,7 @@ curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
 sudo installer -pkg ~/Downloads/RDM-2.2.pkg -target /
 
 # Install Applications from the Apps store
+
 for pkg in Serial OmniGraffle wipr ; do 
   mas install `mas search $pkg |head -1 |awk '{print $1}'`
 done

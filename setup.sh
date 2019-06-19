@@ -1,0 +1,342 @@
+#!/bin/bash
+
+# Name:         slug (Set Up Laptop Gracefully)
+# Version:      0.0.1
+# Release:      1
+# License:      CC-BA (Creative Commons By Attribution)
+#               http://creativecommons.org/licenses/by/4.0/legalcode
+# Group:        System
+# Source:       N/A
+# URL:          N/A
+# Distribution: UNIX
+# Vendor:       Lateral Blast
+# Packager:     Richard Spindler <richard@lateralblast.com.au>
+# Description:  Script to set up Mac
+
+# Set up some version variables
+
+RUBY_VERSION="2.6.3"
+PYTHON_VERSION="3.7.3"
+
+# Install brew
+
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew doctor
+brew update
+brew upgrade
+
+# Setup bash
+
+touch ~/.bashrc
+ln -s ~/.bashrc ~/.bash_profile
+
+# Make some dirs
+
+mkdir ~/Code
+
+# Set up bash environment for later
+
+for line in "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/openssl/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/openssl/include\"" \
+            "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/readline/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/readline/include\"" \
+            "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/sqlite/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/sqlite/include\"" \
+            "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/icu4c/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/icu4c/include\"" \
+            "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/imagemagick@6/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/imagemagick@6/include\"" \
+            "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/ncurses/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/ncurses/include\"" \
+            "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig\"" \
+            "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig\"" \
+            "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/ncurses/lib/pkgconfig\"" \
+            "export PATH=\"/usr/local/opt/icu4c/bin:\$PATH\"" \
+            "export PATH=\"/usr/local/opt/icu4c/sbin:\$PATH\"" \
+            "export PATH=\"/usr/local/opt/imagemagick@6/bin:\$PATH\"" \
+            "export GOPATH=\"\${HOME}/.go\"" \
+            "export GOROOT=\"\$(brew --prefix golang)/libexec\"" \
+            "export PATH=\"\$PATH:\${GOPATH}/bin:\${GOROOT}/bin\""  \
+            "eval \"\$(rbenv init -)\"" \
+            "eval \"\$(pyenv init -)\"" ; do
+  if ! [ "`grep "$line" ~/.bashrc`" ]; then
+    echo "$line" >> ~/.bashrc
+  fi
+  if ! [ "`grep "$line" ~/.zshrc`" ]; then
+    echo "$line" >> ~/.zshrc
+  fi
+done
+
+# Set up zsh environment for later
+
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/openssl/lib"
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/openssl/include"
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/readline/lib"
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/readline/include"
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/sqlite/lib"
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/sqlite/include"
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/imagemagick@6/lib"
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/imagemagick@6/include"
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/icu4c/lib"
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/icu4c/include"
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/ncurses/lib"
+export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/ncurses/include"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/ncurses/lib/pkgconfig"
+export PATH="/usr/local/opt/icu4c/bin:$PATH"
+export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+export GOPATH="${HOME}/.go"
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+
+# Add brew cask
+
+brew tap caskroom/cask
+
+# Install some development tools from cask
+
+for pkg in phantomjs vagrant adoptopenjdk ; do
+  brew cask install $pkg
+done
+
+# Install some programming tools
+
+for pkg in pyenv rbenv go npm git ant; do
+  brew install $pkg
+done
+
+# Install some general tools
+
+for pkg in mas git ansible amtterm awscli libiconv imagemagick@6 ffmpeg packer \
+           dockutil ; do
+  brew install $pkg
+done
+
+# Install some web and other tools
+
+for pkg in lftp wget geckodriver screen tmux c-kermit minicom; do
+  brew install $pkg
+done
+
+# Set up rbenv and pyenv
+
+eval "$(rbenv init -)"
+eval "$(pyenv init -)"
+rbenv install $RUBY_VERSION
+rbenv global $RUBY_VERSION
+pyenv install $PYTHON_VERSION
+pyenv global $PYTHON_VERSION
+
+# Install Ruby modules
+
+for module in versionomy rdoc mechanize selenium-webdriver phantomjs getopt builder \
+              parseconfig netaddr json fileutils ssh-config nokogiri iconv hex_string \
+              terminal-table unpack enumerate prawn prawn-table; do
+  gem install $module
+done
+
+# Install Python modules
+
+pip install pip --upgrade
+
+for module in selenium bs4 npm; do
+  pip install $module
+done
+
+# Set up go
+
+go get golang.org/x/tools/cmd/godoc
+go get github.com/golang/lint/golint
+
+# Ease up install security
+
+sudo spctl --master-disable
+
+# Install general apps
+
+for pkg in iterm2 firefox zoom cyberduck whatsapp xquartz the-unarchiver slack \
+           spectacle transmission rcdefaultapp ; do
+  brew cask install --appdir="/Applications" $pkg
+done
+
+# Install Microsoft apps
+
+for pkg in visual-studio-code microsoft-office skype ; do
+  brew cask install --appdir="/Applications" $pkg
+done
+
+# Install Google apps
+
+for pkg in google-chrome mkchromecast; do
+  brew cask install --appdir="/Applications" $pkg
+done
+
+# Install Virtualisation apps
+
+for pkg in virtualbox virtualbox-extension-pack vmware-fusion docker; do
+  brew cask install --appdir="/Applications" $pkg
+done
+
+# Install RDM
+
+cd ~/Downloads
+curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
+sudo installer -pkg ~/Downloads/RDM-2.2.pkg -target /
+
+# Install Applications from the Apps store
+for pkg in Serial OmniGraffle wipr ; do 
+  mas install `mas search $pkg |head -1 |awk '{print $1}'`
+done
+
+# Tighten install security again
+
+sudo spctl --master-enable
+
+# Setup zsh
+
+brew install zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting
+
+for line in "fpath=(/usr/local/share/zsh-completions \$fpath)" \
+            "source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+            "source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+            "export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters" ; do
+  if ! [ "`grep "$line" ~/.zshrc`" ]; then
+    echo "$line" >> ~/.zshrc
+  fi
+done
+
+echo Y |sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+# Install powerline fonts
+
+cd ~/Code
+git clone https://github.com/powerline/fonts.git powerline-fonts --depth=1
+cd powerline-fonts
+./install.sh
+
+brew tap sambadevi/powerlevel9k
+brew install powerlevel9k
+
+git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
+
+sed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k/powerlevel9k"/1' ~/.zshrc
+
+# System defaults
+
+# Increase window resize speed for Cocoa applications
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+
+# Expand save panel by default
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+
+# Expand print panel by default
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+
+# Save to disk (not to iCloud) by default
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+
+# Check for software updates daily, not just once per week
+defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
+
+# Increase sound quality for Bluetooth headphones/headsets
+defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
+
+# Save screenshots to the Pictures/Screenshots
+mkdir ${HOME}/Pictures/Screenshots
+defaults write com.apple.screencapture location -string "${HOME}/Pictures/Screenshots"
+
+# Disable shadow in screenshots
+defaults write com.apple.screencapture disable-shadow -bool true
+
+# Enable subpixel font rendering on non-Apple LCDs
+defaults write NSGlobalDomain AppleFontSmoothing -int 2
+
+# Finder: disable window animations and Get Info animations
+defaults write com.apple.finder DisableAllAnimations -bool true
+
+# Show icons for hard drives, servers, and removable media on the desktop
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
+defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
+
+# Finder: show path bar
+defaults write com.apple.finder ShowPathbar -bool true
+
+# Finder: allow text selection in Quick Look
+defaults write com.apple.finder QLEnableTextSelection -bool true
+
+# Disable the warning when changing a file extension
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+
+# Avoid creating .DS_Store files on network volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+# Transmission.app                                                            
+
+# Use `~/Documents/Torrents` to store incomplete downloads
+defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
+defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Documents/Torrents"
+
+# Don’t prompt for confirmation before downloading
+defaults write org.m0k.transmission DownloadAsk -bool false
+
+# Trash original torrent files
+defaults write org.m0k.transmission DeleteOriginalTorrent -bool true
+
+# Hide the donate message
+defaults write org.m0k.transmission WarningDonate -bool false
+# Hide the legal disclaimer
+defaults write org.m0k.transmission WarningLegal -bool false
+
+# Google Chrome & Google Chrome Canary   
+
+# Use the system-native print preview dialog
+defaults write com.google.Chrome DisablePrintPreview -bool true
+defaults write com.google.Chrome.canary DisablePrintPreview -bool true
+
+# Expand the print dialog by default
+defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
+defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true
+
+# Safari
+
+# Enable the Develop menu and the Web Inspector in Safari
+defaults write com.apple.Safari IncludeDevelopMenu -bool true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+
+# Add a context menu item for showing the Web Inspector in web views
+defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
+
+# Prevent Safari from opening ‘safe’ files automatically after downloading
+defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
+
+# Show the full URL in the address bar (note: this still hides the scheme)
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+
+# Press Tab to highlight each item on a web page
+defaults write com.apple.Safari WebKitTabToLinksPreferenceKey -bool true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true
+
+# Privacy: don’t send search queries to Apple
+defaults write com.apple.Safari UniversalSearchEnabled -bool false
+defaults write com.apple.Safari SuppressSearchSuggestions -bool true
+
+# Mission Control
+
+# Speed up Mission Control animations
+defaults write com.apple.dock expose-animation-duration -float 0.1
+
+# Show the ~/Library folder
+chflags nohidden ~/Library
+
+# Use list view in all Finder windows by default
+# Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+
+

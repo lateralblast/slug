@@ -10,7 +10,9 @@ Introduction
 
 A script to help automate the setup of a Mac
 
-At the moment it is a simple shell script
+At the moment it is a simple shell script, but I've tried to put in handling
+where possible, e.g. don't add an entry to a file if it's aleady there and
+don't install a package if it's already installed (although brew handles this anyway).
 
 Usage
 -----
@@ -29,6 +31,15 @@ Usage ./setup.sh -abszrpdgVl
 -d: do defaults
 -g: do go setup
 -l: list packages
+```
+
+Examples:
+---------
+
+Install everything:
+
+```
+./setup.sh -a
 ```
 
 License

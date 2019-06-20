@@ -16,7 +16,19 @@ Usage
 -----
 
 ```
-./setup.sh
+Usage ./setup.sh -abszrpdgVl
+
+-h: print help
+-V: print version
+-a: do everything
+-b: do brew packages
+-s: do other packages
+-z: do shell setup
+-r: do ruby setup
+-p: do python setup
+-d: do defaults
+-g: do go setup
+-l: list packages
 ```
 
 License

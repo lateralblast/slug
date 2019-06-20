@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.4
+# Version:      0.0.5
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -99,7 +99,7 @@ install_brew_packages () {
     brew cask install $pkg
   done
   # Install some programming tools
-  for pkg in pyenv rbenv go npm git ant; do
+  for pkg in pyenv rbenv go npm git ant mercurial ; do
     brew install $pkg
   done
   # Install some general tools
@@ -173,14 +173,36 @@ install_brew_cask_packages () {
   done
 }
 
+# Install Google Noto font pack
+
+install_google_noto_fonts () {
+  if [ ! -e "/Library/Fonts/NotoColorEmoji.ttf" ] ; then
+    if [ ! -e "$HOME/Noto-unhinted.zip" ] ; then
+      cd $HOME/Downloads
+      curl -O https://noto-website-2.storage.googleapis.com/pkgs/Noto-unhinted.zip
+    fi
+    if [ ! -d "$HOME/Downloads/google-noto-fonts" ] ; then
+      mkdir $HOME/Downloads/google-noto-fonts
+      cd $HOME/Downloads/google-noto-fonts
+      unzip -q $HOME/Downloads/Noto-unhinted.zip
+    fi
+    cd $HOME/Downloads/google-noto-fonts
+    cp *.ttf /Library/Fonts
+    cd ..
+    rm -rf $HOME/Downloads/google-noto-fonts
+  fi
+}
+
 # Install other packages not in brew, the App store, etc
 
 install_others_packages () {
   # Install RDM
   if [ ! -d "/Applications/RDM.app" ] ; then
     cd $HOME/Downloads
-    curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
-    sudo installer -pkg $HOME/Downloads/RDM-2.2.pkg -target /
+    if [ ! -e "$HOME/Downloads/RDM-2.2.pkg" ] ; then
+      curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
+      sudo installer -pkg $HOME/Downloads/RDM-2.2.pkg -target /
+    fi
   fi
 }
 
@@ -363,6 +385,10 @@ do_version () {
   echo "$script_version"
 }
 
+do_fonts () {
+  install_google_noto_fonts
+}
+
 print_help () {
   echo ""
   echo "Usage $0 -abszrpdgVl"
@@ -400,6 +426,9 @@ while getopts ":abszrpdgVl" args ; do
       ;;
     l)
       do_list_packages
+      ;;
+    f)
+      do_fonts
       ;;
     s)
       do_other_packages

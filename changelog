@@ -32,3 +32,17 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
 ### Changes
 - Thu 20 Jun 2019 23:13:28 AEST
   Split code into subroutines
+
+## [0.0.4] - 2019-06-21
+
+### Changes
+- Fri 21 Jun 2019 05:52:09 AEST
+  Bug fixes and cleanup
+
+## [0.0.5] - 2019-06-21
+
+### Added
+
+- Fri 21 Jun 2019 09:13:48 AEST
+  Added google noto fonts option
+  

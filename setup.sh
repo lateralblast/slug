@@ -91,6 +91,7 @@ setup_shells () {
   export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 }
 
+# Install packages via brew
 
 install_brew_packages () {
   # Install some development tools from cask
@@ -172,6 +173,8 @@ install_brew_cask_packages () {
   done
 }
 
+# Install other packages not in brew, the App store, etc
+
 install_others_packages () {
   # Install RDM
   if [ ! -d "/Applications/RDM.app" ] ; then
@@ -224,7 +227,7 @@ setup_zsh () {
   sed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k/powerlevel9k"/g' $HOME/.zshrc
 }
 
-# System defaults
+# System defaults - Needs checking some of these no longer seem correct on updated Mac OS
 
 setup_defaults () {
   # Increase window resize speed for Cocoa applications

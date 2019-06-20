@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.3
+# Version:      0.0.4
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -52,61 +52,40 @@ setup_shells () {
   if [ ! -e "$HOME/.bash_profile" ] ; then
     ln -s $HOME/.bashrc $HOME/.bash_profile
   fi
-  for line in "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/openssl/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/openssl/include\"" \
-    "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/readline/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/readline/include\"" \
-    "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/sqlite/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/sqlite/include\"" \
-    "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/icu4c/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/icu4c/include\"" \
-    "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/imagemagick@6/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/imagemagick@6/include\"" \
-    "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/libffi/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/libffi/include\"" \
-    "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/ncurses/lib\"" \
-    "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/ncurses/include\"" \
-    "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig\"" \
-    "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig\"" \
-    "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/ncurses/lib/pkgconfig\"" \
-    "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/libffi/lib/pkgconfig\"" \
-    "export PATH=\"/usr/local/opt/icu4c/bin:\$PATH\"" \
-    "export PATH=\"/usr/local/opt/icu4c/sbin:\$PATH\"" \
-    "export PATH=\"/usr/local/opt/imagemagick@6/bin:\$PATH\"" \
-    "export GOPATH=\"\${HOME}/.go\"" \
+  for lib in openssl readline sqlite imagemagick@6 icu4c ncurses libffi ; do
+    for line in "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/$lib/include\"" \
+      "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/$lib/lib\"" \
+      "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/$lib/lib/pkgconfig\"" \
+      "export PATH=\"/usr/local/opt/$lib/bin:\$PATH\"" \
+      "export PATH=\"/usr/local/opt/$lib/sbin:\$PATH\"" ; do
+        if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
+          echo "$line" >> $HOME/.bashrc 
+        fi
+        if [ ! "`grep \"$line\" $HOME/.zshrc`" ]; then
+          echo "$line" >> $HOME/.zshrc 
+        fi
+    done
+  done
+  for line in "export GOPATH=\"\$HOME/.go\"" \
     "export GOROOT=\"\$(brew --prefix golang)/libexec\"" \
-    "export PATH=\"\$PATH:\${GOPATH}/bin:\${GOROOT}/bin\""  \
+    "export PATH=\"\$PATH:\$GOPATH/bin:\$GOROOT/bin\"" \
     "eval \"\$(rbenv init -)\"" \
     "eval \"\$(pyenv init -)\"" ; do
-    if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
-      echo "$line" >> $HOME/.bashrc
-    fi
-    if [ ! "`grep \"$line\" $HOME/.zshrc`" ]; then
-      echo "$line" >> $HOME/.zshrc
-    fi
+      if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
+        echo "$line" >> $HOME/.bashrc 
+      fi
+      if [ ! "`grep \"$line\" $HOME/.zshrc`" ]; then
+        echo "$line" >> $HOME/.zshrc 
+      fi
   done
 
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/openssl/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/openssl/include"
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/readline/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/readline/include"
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/sqlite/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/sqlite/include"
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/imagemagick@6/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/imagemagick@6/include"
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/icu4c/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/icu4c/include"
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/ncurses/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/ncurses/include"
-  export LDFLAGS="$LDFLAGS -L/usr/local/opt/libffi/lib"
-  export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/libffi/include"
-  export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig"
-  export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig"
-  export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/ncurses/lib/pkgconfig"
-  export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/libffi/lib/pkgconfig" 
-  export PATH="/usr/local/opt/icu4c/bin:$PATH"
-  export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-  export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+  for lib in openssl readline sqlite imagemagick@6 icu4c ncurses libffi ; do
+    export LDFLAGS="$LDFLAGS -L/usr/local/opt/$lib/lib"
+    export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/$lib/include"
+    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/$lib/lib/pkgconfig"
+    export PATH="/usr/local/opt/$lib/bin:$PATH"
+    export PATH="/usr/local/opt/$lib/sbin:$PATH"
+  done
   export GOPATH="${HOME}/.go"
   export GOROOT="$(brew --prefix golang)/libexec"
   export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
@@ -237,12 +216,12 @@ setup_zsh () {
     cd powerline-fonts
     ./install.sh
   fi
-  if ! -d [ "$HOME/.oh-my-zsh/custom/themes/powerlevel9" ] ; then
+  if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ] ; then
     brew tap sambadevi/powerlevel9k
     brew install powerlevel9k
     git clone https://github.com/bhilburn/powerlevel9k.git $HOME/.oh-my-zsh/custom/themes/powerlevel9k
   fi
-  sed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k/powerlevel9k"/1' $HOME/.zshrc
+  sed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k/powerlevel9k"/g' $HOME/.zshrc
 }
 
 # System defaults
@@ -342,41 +321,35 @@ do_all () {
   setup_zsh
   setup_defaults
   install_brew_cask_packages
-  exit
 }
 
 do_brew () {
   install_brew
   update_brew
   install_brew_packages
-  exit
+  install_brew_cask_packages
 }
 
 do_other_packages () {
   install_app_store_packages
   install_others_packages
-  exit
 }
 
 do_shells () {
   setup_shells
   setup_zsh
-  exit
 }
 
 do_ruby () {
   setup_ruby
-  exit
 }
 
 do_python () {
   setup_python
-  exit
 }
 
 do_go () {
   setup_go
-  exit
 }
 
 do_list_packages () {
@@ -403,7 +376,6 @@ print_help () {
   echo "-g: do go setup"
   echo "-l: list packages"
   echo ""
-  exit
 }
 
 # If given no command line arguments print usage information

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.1
+# Version:      0.0.2
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -20,19 +20,26 @@ PYTHON_VERSION="3.7.3"
 
 # Install brew
 
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew doctor
+if [ ! -e "/usr/local/bin/brew" ] ; then
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew doctor
+fi
 brew update
 brew upgrade
 
 # Setup bash
 
 touch ~/.bashrc
-ln -s ~/.bashrc ~/.bash_profile
+
+if [ ! -e "~/.bash_profile" ] ; then
+  ln -s ~/.bashrc ~/.bash_profile
+fi
 
 # Make some dirs
 
-mkdir ~/Code
+if [ ! -d "~/Code" ] ; then
+  mkdir ~/Code
+fi
 
 # Set up bash environment for later
 
@@ -46,11 +53,14 @@ for line in "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/openssl/lib\"" \
             "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/icu4c/include\"" \
             "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/imagemagick@6/lib\"" \
             "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/imagemagick@6/include\"" \
+            "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/libffi/lib\"" \
+            "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/libffi/include\"" \
             "export LDFLAGS=\"\$LDFLAGS -L/usr/local/opt/ncurses/lib\"" \
             "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/ncurses/include\"" \
             "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/icu4c/lib/pkgconfig\"" \
             "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig\"" \
             "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/ncurses/lib/pkgconfig\"" \
+            "export PKG_CONFIG_PATH=\"\$PKG_CONFIG_PATH:/usr/local/opt/libffi/lib/pkgconfig\"" \
             "export PATH=\"/usr/local/opt/icu4c/bin:\$PATH\"" \
             "export PATH=\"/usr/local/opt/icu4c/sbin:\$PATH\"" \
             "export PATH=\"/usr/local/opt/imagemagick@6/bin:\$PATH\"" \
@@ -110,7 +120,7 @@ done
 # Install some general tools
 
 for pkg in mas git ansible amtterm awscli libiconv imagemagick@6 ffmpeg packer \
-           dockutil ; do
+           "dockutil" pwgen ; do
   brew install $pkg
 done
 
@@ -122,12 +132,17 @@ done
 
 # Set up rbenv and pyenv
 
-eval "$(rbenv init -)"
-eval "$(pyenv init -)"
-rbenv install $RUBY_VERSION
-rbenv global $RUBY_VERSION
-pyenv install $PYTHON_VERSION
-pyenv global $PYTHON_VERSION
+if [ ! -e "/usr/local/bin/rbenv" ] ; then
+  eval "$(rbenv init -)"
+  rbenv install $RUBY_VERSION
+  rbenv global $RUBY_VERSION
+fi
+
+if [ ! -e "/usr/local/bin/pyenv" ] ; then
+  eval "$(pyenv init -)"
+  pyenv install $PYTHON_VERSION
+  pyenv global $PYTHON_VERSION
+fi
 
 # Install Ruby modules
 
@@ -181,14 +196,18 @@ done
 
 # Install RDM
 
-cd ~/Downloads
-curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
-sudo installer -pkg ~/Downloads/RDM-2.2.pkg -target /
+if [ ! -d "/Applications/RDM.app" ] ; then
+  cd ~/Downloads
+  curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
+  sudo installer -pkg ~/Downloads/RDM-2.2.pkg -target /
+fi
 
 # Install Applications from the Apps store
 
 for pkg in Serial OmniGraffle wipr ; do 
-  mas install `mas search $pkg |head -1 |awk '{print $1}'`
+  if [ ! - d "/Applications/$pkg.app" ] ; then
+    mas install `mas search $pkg |head -1 |awk '{print $1}'`
+  fi
 done
 
 # Tighten install security again
@@ -208,19 +227,24 @@ for line in "fpath=(/usr/local/share/zsh-completions \$fpath)" \
   fi
 done
 
-echo Y |sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+if [ ! -d "~/.oh-my-zsh" ]; then
+  echo Y |sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+fi
 
 # Install powerline fonts
 
-cd ~/Code
-git clone https://github.com/powerline/fonts.git powerline-fonts --depth=1
-cd powerline-fonts
-./install.sh
+if [ ! -d "~/Code/powerline-fonts" ] ; then
+  cd ~/Code
+  git clone https://github.com/powerline/fonts.git powerline-fonts --depth=1
+  cd powerline-fonts
+  ./install.sh
+fi
 
-brew tap sambadevi/powerlevel9k
-brew install powerlevel9k
-
-git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
+if ! -d [ "~/.oh-my-zsh/custom/themes/powerlevel9" ] ; then
+  brew tap sambadevi/powerlevel9k
+  brew install powerlevel9k
+  git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k
+fi
 
 sed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k/powerlevel9k"/1' ~/.zshrc
 

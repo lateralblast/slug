@@ -11,3 +11,14 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
 ### Added
 - Wed 19 Jun 2019 22:41:23 AEST
   Initial commit
+
+
+## [0.0.2] - 2019-06-20
+
+### Added
+- Thu 20 Jun 2019 20:52:43 AEST
+  Added more packages and checking
+
+### Changes
+- Thu 20 Jun 2019 20:52:43 AEST
+  Bug fixes

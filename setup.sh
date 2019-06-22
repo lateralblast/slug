@@ -103,7 +103,7 @@ install_brew_packages () {
     brew install $pkg
   done
   # Install some general tools
-  for pkg in mas git ansible amtterm awscli libiconv imagemagick@6 ffmpeg packer dockutil pwgen ; do
+  for pkg in mas git ansible amtterm awscli libiconv imagemagick@6 ffmpeg packer dockutil pwgen shellcheck ; do
     brew install $pkg
   done
   # Install some web and other tools
@@ -210,7 +210,7 @@ install_others_packages () {
 
 install_app_store_packages () {
   for pkg in Serial OmniGraffle wipr ; do 
-    if [ ! - d "/Applications/$pkg.app" ] ; then
+    if [ ! -d "/Applications/$pkg.app" ] ; then
       mas install `mas search $pkg |head -1 |awk '{print $1}'`
     fi
   done

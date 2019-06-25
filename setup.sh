@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.5
+# Version:      0.0.6
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -69,6 +69,8 @@ setup_shells () {
   for line in "export GOPATH=\"\$HOME/.go\"" \
     "export GOROOT=\"\$(brew --prefix golang)/libexec\"" \
     "export PATH=\"\$PATH:\$GOPATH/bin:\$GOROOT/bin\"" \
+    "export PATH=\"\/usr/local/bin/$PATH\"" \
+    "export PATH=\"\/usr/local/sbin/$PATH\"" \
     "eval \"\$(rbenv init -)\"" \
     "eval \"\$(pyenv init -)\"" ; do
       if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
@@ -86,6 +88,8 @@ setup_shells () {
     export PATH="/usr/local/opt/$lib/bin:$PATH"
     export PATH="/usr/local/opt/$lib/sbin:$PATH"
   done
+  export PATH="/usr/local/bin:$PATH"
+  export PATH="/usr/local/sbin:$PATH"
   export GOPATH="${HOME}/.go"
   export GOROOT="$(brew --prefix golang)/libexec"
   export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"

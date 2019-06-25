@@ -46,3 +46,9 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
 - Fri 21 Jun 2019 09:13:48 AEST
   Added google noto fonts option
   
+## [0.0.6] - 2019-06-26
+
+### Added
+
+- Wed 26 Jun 2019 08:25:24 AEST
+  Added /usr/local/bin and /usr/local/sbin to PATH

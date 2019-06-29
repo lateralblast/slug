@@ -69,8 +69,8 @@ setup_shells () {
   for line in "export GOPATH=\"\$HOME/.go\"" \
     "export GOROOT=\"\$(brew --prefix golang)/libexec\"" \
     "export PATH=\"\$PATH:\$GOPATH/bin:\$GOROOT/bin\"" \
-    "export PATH=\"\/usr/local/bin/$PATH\"" \
-    "export PATH=\"\/usr/local/sbin/$PATH\"" \
+    "export PATH=\"/usr/local/bin:\$PATH\"" \
+    "export PATH=\"/usr/local/sbin:\$PATH\"" \
     "eval \"\$(rbenv init -)\"" \
     "eval \"\$(pyenv init -)\"" ; do
       if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
@@ -233,7 +233,7 @@ install_app_store_packages () {
 # Setup zsh
 
 setup_zsh () {
-  for pkg in zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting ; do
+  for pkg in zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting gnu-sed ; do
     brew install $pkg
   done
   for line in "fpath=(/usr/local/share/zsh-completions \$fpath)" \
@@ -260,7 +260,7 @@ setup_zsh () {
     brew install powerlevel9k
     git clone https://github.com/bhilburn/powerlevel9k.git $HOME/.oh-my-zsh/custom/themes/powerlevel9k
   fi
-  sed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k/powerlevel9k"/g' $HOME/.zshrc
+  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k\/powerlevel9k"/g' $HOME/.zshrc
 }
 
 # System defaults - Needs checking some of these no longer seem correct on updated Mac OS

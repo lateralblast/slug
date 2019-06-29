@@ -64,4 +64,6 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
 ### Changed
 - Sun 30 Jun 2019 09:21:09 AEST
   Fixed bugs with shell routine
+- Sun 30 Jun 2019 09:58:14 AEST
+  Moved from powerlevel9k to powerlevel10k
   

@@ -255,12 +255,10 @@ setup_zsh () {
     cd powerline-fonts
     ./install.sh
   fi
-  if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ] ; then
-    brew tap sambadevi/powerlevel9k
-    brew install powerlevel9k
-    git clone https://github.com/bhilburn/powerlevel9k.git $HOME/.oh-my-zsh/custom/themes/powerlevel9k
+  if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] ; then
+    git clone https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/custom/themes/powerlevel10k
   fi
-  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k\/powerlevel9k"/g' $HOME/.zshrc
+  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k\/powerlevel10k"/g' $HOME/.zshrc
 }
 
 # System defaults - Needs checking some of these no longer seem correct on updated Mac OS

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.6
+# Version:      0.0.7
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -120,16 +120,21 @@ install_brew_packages () {
 
 setup_ruby () {
   # Setup rbenv
-  if [ ! -e "/usr/local/bin/rbenv" ] ; then
+  if [ -e "/usr/local/bin/rbenv" ] ; then
     eval "$(rbenv init -)"
-    rbenv install $RUBY_VERSION
-    rbenv global $RUBY_VERSION
+    if [ ! "`rbenv versions |grep \"$RUBY_VERSION\"`" ] ; then
+      rbenv install $RUBY_VERSION  
+      rbenv global $RUBY_VERSION
+    fi
   fi
   # Install Ruby modules
+  current=`gem list`
   for module in versionomy rdoc mechanize selenium-webdriver phantomjs getopt builder \
     parseconfig netaddr json fileutils ssh-config nokogiri iconv hex_string \
     terminal-table unpack enumerate prawn prawn-table; do
-    gem install $module
+    if [ ! "`echo \"$current\" |grep \"$module\"`" ] ; then
+      gem install $module
+    fi
   done
 }
 
@@ -137,15 +142,20 @@ setup_ruby () {
 
 setup_python () {
   # Setup pyenv
-  if [ ! -e "/usr/local/bin/pyenv" ] ; then
+  if [ -e "/usr/local/bin/pyenv" ] ; then
     eval "$(pyenv init -)"
-    pyenv install $PYTHON_VERSION
-    pyenv global $PYTHON_VERSION
+    if [ ! "`pyenv versions |grep \"$PYTHON_VERSION\"`" ] ; then
+      pyenv install $PYTHON_VERSION
+      pyenv global $PYTHON_VERSION
+    fi
   fi
   # Install Python modules
+  current=`pip list`
   pip install pip --upgrade
   for module in selenium bs4 npm; do
-    pip install $module
+    if [ ! "`echo \"$current\" |grep \"$module\"`" ] ; then
+      pip install $module
+    fi
   done
 }
 

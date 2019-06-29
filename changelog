@@ -29,13 +29,13 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
 - Thu 20 Jun 2019 23:13:28 AEST
   Added help and version information
 
-### Changes
+### Changed
 - Thu 20 Jun 2019 23:13:28 AEST
   Split code into subroutines
 
 ## [0.0.4] - 2019-06-21
 
-### Changes
+### Changed
 - Fri 21 Jun 2019 05:52:09 AEST
   Bug fixes and cleanup
 
@@ -52,3 +52,9 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
 
 - Wed 26 Jun 2019 08:25:24 AEST
   Added /usr/local/bin and /usr/local/sbin to PATH
+
+## [0.0.7] - 2019-06-26
+
+### Changed
+- Sat 29 Jun 2019 22:28:35 AEST
+  Improved rbenv and pyenv install

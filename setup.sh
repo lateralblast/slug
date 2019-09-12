@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.7
+# Version:      0.0.8
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -258,7 +258,7 @@ setup_zsh () {
   if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] ; then
     git clone https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/custom/themes/powerlevel10k
   fi
-  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel9k\/powerlevel10k"/g' $HOME/.zshrc
+  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' $HOME/.zshrc
 }
 
 # System defaults - Needs checking some of these no longer seem correct on updated Mac OS

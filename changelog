@@ -78,3 +78,9 @@ and this project tries to adhere to [Semantic Versioning](https://semver.org/spe
  ### Changed
  - Sat 23 Nov 2019 20:48:24 AEDT
    Some bug fixes and improvements
+
+## [0.1.0] - 2019-11-23
+
+ ### Changed
+ - Sat 23 Nov 2019 21:46:51 AEDT
+   Additional code cleanup

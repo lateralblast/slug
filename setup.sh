@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.9
+# Version:      0.1.0
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -18,8 +18,20 @@
 RUBY_VERSION="2.6.3"
 PYTHON_VERSION="3.7.3"
 
-start_path=$(pwd)
-script_version=$(cd "$start_path" || exit ; cat "$0" | grep '^# Version' |awk '{print $3}')
+# Get the path the script starts from
+
+app_file="$0"
+app_path=$(dirname "$app_file")
+app_base=$(basename "$app_file")
+
+# Get the script info from the script itself
+
+app_vers=$(grep "^# Version" "$0" |awk '{print $3}')
+app_name=$(grep "^# Name" "$0" |awk '{for (i=3;i<=NF;++i) printf $i" "}' |sed 's/ $//g')
+app_same=$(grep "^# Name" "$0" |awk '{print $3}')
+app_pkgr=$(grep "^# Packager" "$0" |awk '{for (i=3;i<=NF;++i) printf $i" "}')
+app_help=$(grep -A1 " [A-Z,a-z])$" "$0" |sed "s/[#,\-\-]//g" |sed '/^\s*$/d')
+
 args=$@
 
 # Install brew
@@ -399,35 +411,33 @@ do_go () {
   setup_go
 }
 
+# List packages
+
 do_list_packages () {
   cat "$0" |grep pkg | grep "do$" |awk '{for(i=4;i<=NF-1;++i)print $i}'  |cut -f1 -d";" |tr ' ' '\n' |grep -v "^$" 
 }
 
 do_version () {
-  echo "$script_version"
+  echo "$app_vers"
 }
+
+# Install fonts
 
 do_fonts () {
   install_google_noto_fonts
 }
 
-print_help () {
+# Print some help
+
+print_help() {
+  echo "$app_name $app_vers"
+  echo "$app_pkgr"
   echo ""
-  echo "Usage $0 -abszrpdgVl"
+  echo "Usage Information:"
   echo ""
-  echo "-h: print help"
-  echo "-V: print version"
-  echo "-a: do everything"
-  echo "-b: do brew packages"
-  echo "-c: do brew cask packages"
-  echo "-s: do other packages"
-  echo "-z: do shell setup"
-  echo "-r: do ruby setup"
-  echo "-p: do python setup"
-  echo "-d: do defaults"
-  echo "-g: do go setup"
-  echo "-l: list packages"
+  echo "$app_help"
   echo ""
+  return
 }
 
 # If given no command line arguments print usage information
@@ -442,42 +452,55 @@ fi
 while getopts ":abcfszrpdgVl" args ; do
   case $args in
     a)
+      # Do everything
       do_all
       ;;
     b)
+      # Install brew package
       do_brew
       ;;
     c)
+      # Install brew cask packages
       install_brew_cask_packages
       ;;
     l)
+      # List packages
       do_list_packages
       ;;
     f)
+      # Install fonts
       do_fonts
       ;;
     s)
+      # Install other packages
       do_other_packages
       ;;
     z)
+      # Setup shells
       do_shells
       ;;
     r)
+      # Install Ruby
       do_ruby
       ;;
     p)
+      # Install Python
       do_python
       ;;
     d)
+      # Set OS X defaults
       do_defaults
       ;;
     g)
+      # Install go
       do_go
       ;;
     V)
+      # Display version
       do_version
       ;;
     *)
+      # Display help
       print_help
       ;;
   esac

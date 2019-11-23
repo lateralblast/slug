@@ -18,19 +18,35 @@ Usage
 -----
 
 ```
-Usage ./setup.sh -abszrpdgVl
+slug (Set Up Laptop Gracefully) 0.1.0
+Richard Spindler <richard@lateralblast.com.au>
 
--h: print help
--V: print version
--a: do everything
--b: do brew packages
--s: do other packages
--z: do shell setup
--r: do ruby setup
--p: do python setup
--d: do defaults
--g: do go setup
--l: list packages
+Usage Information:
+
+    a)
+       Do everything
+    b)
+       Install brew package
+    c)
+       Install brew cask packages
+    l)
+       List packages
+    f)
+       Install fonts
+    s)
+       Install other packages
+    z)
+       Setup shells
+    r)
+       Install Ruby
+    p)
+       Install Python
+    d)
+       Set OS X defaults
+    g)
+       Install go
+    V)
+       Display version
 ```
 
 Examples:

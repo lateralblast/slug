@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name:         slug (Set Up Laptop Gracefully)
-# Version:      0.0.8
+# Version:      0.0.9
 # Release:      1
 # License:      CC-BA (Creative Commons By Attribution)
 #               http://creativecommons.org/licenses/by/4.0/legalcode
@@ -18,8 +18,8 @@
 RUBY_VERSION="2.6.3"
 PYTHON_VERSION="3.7.3"
 
-start_path=`pwd`
-script_version=`cd $start_path ; cat $0 | grep '^# Version' |awk '{print $3}'`
+start_path=$(pwd)
+script_version=$(cd "$start_path" || exit ; cat "$0" | grep '^# Version' |awk '{print $3}')
 args=$@
 
 # Install brew
@@ -31,7 +31,8 @@ install_brew () {
   fi
   brew update
   brew upgrade
-  brew tap caskroom/cask
+  #brew tap caskroom/cask
+  brew tap homebrew/cask
 }
 
 update_brew () {
@@ -42,15 +43,15 @@ update_brew () {
 # Make some dirs
 
 if [ ! -d "$HOME/Code" ] ; then
-  mkdir $HOME/Code
+  mkdir "$HOME/Code"
 fi
 
 # Setup bash and zsh environment
 
 setup_shells () {
-  touch $HOME/.bashrc
+  touch "$HOME/.bashrc"
   if [ ! -e "$HOME/.bash_profile" ] ; then
-    ln -s $HOME/.bashrc $HOME/.bash_profile
+    ln -s "$HOME/.bashrc" "$HOME/.bash_profile"
   fi
   for lib in openssl readline sqlite imagemagick@6 icu4c ncurses libffi ; do
     for line in "export CPPFLAGS=\"\$CPPFLAGS -I/usr/local/opt/$lib/include\"" \
@@ -59,10 +60,10 @@ setup_shells () {
       "export PATH=\"/usr/local/opt/$lib/bin:\$PATH\"" \
       "export PATH=\"/usr/local/opt/$lib/sbin:\$PATH\"" ; do
         if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
-          echo "$line" >> $HOME/.bashrc 
+          echo "$line" >> "$HOME/.bashrc" 
         fi
         if [ ! "`grep \"$line\" $HOME/.zshrc`" ]; then
-          echo "$line" >> $HOME/.zshrc 
+          echo "$line" >> "$HOME/.zshrc" 
         fi
     done
   done
@@ -74,10 +75,10 @@ setup_shells () {
     "eval \"\$(rbenv init -)\"" \
     "eval \"\$(pyenv init -)\"" ; do
       if [ ! "`grep \"$line\" $HOME/.bashrc`" ]; then
-        echo "$line" >> $HOME/.bashrc 
+        echo "$line" >> "$HOME/.bashrc" 
       fi
       if [ ! "`grep \"$line\" $HOME/.zshrc`" ]; then
-        echo "$line" >> $HOME/.zshrc 
+        echo "$line" >> "$HOME/.zshrc" 
       fi
   done
 
@@ -128,7 +129,7 @@ setup_ruby () {
     fi
   fi
   # Install Ruby modules
-  current=`gem list`
+  current=$(gem list)
   for module in versionomy rdoc mechanize selenium-webdriver phantomjs getopt builder \
     parseconfig netaddr json fileutils ssh-config nokogiri iconv hex_string \
     terminal-table unpack enumerate prawn prawn-table; do
@@ -150,7 +151,7 @@ setup_python () {
     fi
   fi
   # Install Python modules
-  current=`pip list`
+  current=$(pip list)
   pip install pip --upgrade
   for module in selenium bs4 npm; do
     if [ ! "`echo \"$current\" |grep \"$module\"`" ] ; then
@@ -170,20 +171,29 @@ setup_go () {
 
 install_brew_cask_packages () {
   # Install general apps
+  brew_list=$(brew cask list)
   for pkg in iterm2 firefox zoom cyberduck whatsapp xquartz the-unarchiver slack spectacle transmission rcdefaultapp ; do
-    brew cask install --appdir="/Applications" $pkg
+    if [ ! "`echo \"$brew_list\" |grep -i $pkg`" ] ; then
+      brew cask install --appdir="/Applications" "$pkg"
+    fi
   done
   # Install Microsoft apps
   for pkg in visual-studio-code microsoft-office skype ; do
-    brew cask install --appdir="/Applications" $pkg
+    if [ ! "`echo \"$brew_list\" |grep -i $pkg`" ] ; then
+      brew cask install --appdir="/Applications" "$pkg"
+    fi
   done
   # Install Google apps
   for pkg in google-chrome mkchromecast ; do
-    brew cask install --appdir="/Applications" $pkg
+    if [ ! "`echo \"$brew_list\" |grep -i $pkg`" ] ; then
+      brew cask install --appdir="/Applications" "$pkg"
+    fi
   done
   # Install Virtualisation apps
   for pkg in virtualbox virtualbox-extension-pack vmware-fusion docker ; do
-    brew cask install --appdir="/Applications" $pkg
+    if [ ! "`echo \"$brew_list\" |grep -i $pkg`" ] ; then
+      brew cask install --appdir="/Applications" "$pkg"
+    fi
   done
 }
 
@@ -192,18 +202,18 @@ install_brew_cask_packages () {
 install_google_noto_fonts () {
   if [ ! -e "/Library/Fonts/NotoColorEmoji.ttf" ] ; then
     if [ ! -e "$HOME/Noto-unhinted.zip" ] ; then
-      cd $HOME/Downloads
+      cd "$HOME/Downloads" || exit
       curl -O https://noto-website-2.storage.googleapis.com/pkgs/Noto-unhinted.zip
     fi
     if [ ! -d "$HOME/Downloads/google-noto-fonts" ] ; then
-      mkdir $HOME/Downloads/google-noto-fonts
-      cd $HOME/Downloads/google-noto-fonts
-      unzip -q $HOME/Downloads/Noto-unhinted.zip
+      mkdir "$HOME/Downloads/google-noto-fonts"
+      cd "$HOME/Downloads/google-noto-fonts" || exit 
+      unzip -q "$HOME/Downloads/Noto-unhinted.zip"
     fi
-    cd $HOME/Downloads/google-noto-fonts
-    cp *.ttf /Library/Fonts
-    cd ..
-    rm -rf $HOME/Downloads/google-noto-fonts
+    cd "$HOME/Downloads/google-noto-fonts" || exit
+    cp ./*.ttf /Library/Fonts
+    cd .. || exit
+    rm -rf "$HOME/Downloads/google-noto-fonts"
   fi
 }
 
@@ -212,10 +222,10 @@ install_google_noto_fonts () {
 install_others_packages () {
   # Install RDM
   if [ ! -d "/Applications/RDM.app" ] ; then
-    cd $HOME/Downloads
+    cd "$HOME/Downloads" || exit
     if [ ! -e "$HOME/Downloads/RDM-2.2.pkg" ] ; then
       curl - O http://avi.alkalay.net/software/RDM/RDM-2.2.pkg
-      sudo installer -pkg $HOME/Downloads/RDM-2.2.pkg -target /
+      sudo installer -pkg "$HOME/Downloads/RDM-2.2.pkg" -target /
     fi
   fi
 }
@@ -225,7 +235,7 @@ install_others_packages () {
 install_app_store_packages () {
   for pkg in Serial OmniGraffle wipr ; do 
     if [ ! -d "/Applications/$pkg.app" ] ; then
-      mas install `mas search $pkg |head -1 |awk '{print $1}'`
+      mas install "$(mas search $pkg |head -1 |awk '{print $1}')"
     fi
   done
 }
@@ -241,7 +251,7 @@ setup_zsh () {
     "source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
     "export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters" ; do
     if [ ! "`grep \"$line\" $HOME/.zshrc`" ] ; then
-      echo "$line" >> $HOME/.zshrc
+      echo "$line" >> "$HOME/.zshrc"
     fi
   done
   # Install oh my zsh
@@ -250,15 +260,15 @@ setup_zsh () {
   fi
   # Install powerline fonts
   if [ ! -d "$HOME/Code/powerline-fonts" ] ; then
-    cd $HOME/Code
+    cd "$HOME/Code" || exit
     git clone https://github.com/powerline/fonts.git powerline-fonts --depth=1
-    cd powerline-fonts
+    cd powerline-fonts || exit
     ./install.sh
   fi
   if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ] ; then
-    git clone https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/custom/themes/powerlevel10k
+    git clone https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
   fi
-  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' $HOME/.zshrc
+  gsed -ie 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' "$HOME/.zshrc"
 }
 
 # System defaults - Needs checking some of these no longer seem correct on updated Mac OS
@@ -279,7 +289,7 @@ setup_defaults () {
   # Increase sound quality for Bluetooth headphones/headsets
   defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
   # Save screenshots to the Pictures/Screenshots
-  mkdir ${HOME}/Pictures/Screenshots
+  mkdir "${HOME}/Pictures/Screenshots"
   defaults write com.apple.screencapture location -string "${HOME}/Pictures/Screenshots"
   # Disable shadow in screenshots
   defaults write com.apple.screencapture disable-shadow -bool true
@@ -340,7 +350,7 @@ setup_defaults () {
   # Speed up Mission Control animations
   defaults write com.apple.dock expose-animation-duration -float 0.1
   # Show the ~/Library folder
-  chflags nohidden $HOME/Library
+  chflags nohidden "$HOME/Library"
   # Use list view in all Finder windows by default
   # Four-letter codes for the other view modes: "icnv", "clmv", "Flwv"
   defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
@@ -390,7 +400,7 @@ do_go () {
 }
 
 do_list_packages () {
-  cat $0 |grep pkg | grep "do$" |awk '{for(i=4;i<=NF-1;++i)print $i}'  |cut -f1 -d";" |tr ' ' '\n' |grep -v "^$" 
+  cat "$0" |grep pkg | grep "do$" |awk '{for(i=4;i<=NF-1;++i)print $i}'  |cut -f1 -d";" |tr ' ' '\n' |grep -v "^$" 
 }
 
 do_version () {
@@ -409,6 +419,7 @@ print_help () {
   echo "-V: print version"
   echo "-a: do everything"
   echo "-b: do brew packages"
+  echo "-c: do brew cask packages"
   echo "-s: do other packages"
   echo "-z: do shell setup"
   echo "-r: do ruby setup"
@@ -428,13 +439,16 @@ fi
 
 # Handle versions
 
-while getopts ":abszrpdgVl" args ; do
+while getopts ":abcfszrpdgVl" args ; do
   case $args in
     a)
       do_all
       ;;
     b)
       do_brew
+      ;;
+    c)
+      install_brew_cask_packages
       ;;
     l)
       do_list_packages
